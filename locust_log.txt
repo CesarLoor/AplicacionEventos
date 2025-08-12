@@ -1,0 +1,6 @@
+[2025-07-08 23:49:15,641] kibo/INFO/locust.main: Starting Locust 2.37.12
+[2025-07-08 23:49:15,643] kibo/INFO/locust.main: Run time limit set to 30 seconds
+[2025-07-08 23:49:15,648] kibo/INFO/locust.runners: Ramping to 5 users at a rate of 1.00 per second
+[2025-07-08 23:49:19,684] kibo/INFO/locust.runners: All users spawned: {"AdminUser": 3, "RegularUser": 2} (5 total users)
+[2025-07-08 23:49:43,175] kibo/INFO/locust.main: --run-time limit reached, shutting down
+[2025-07-08 23:49:43,892] kibo/INFO/locust.main: Shutting down (exit code 0)

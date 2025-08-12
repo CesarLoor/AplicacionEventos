@@ -1,0 +1,91 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:7
+    container_name: redis-encuentro
+    ports:
+      - "6379:6379"
+
+  mongodb:
+    image: mongo:6
+    container_name: mongodb-encuentro
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  usuarios:
+    build:
+      context: ./servicio-usuarios
+    container_name: servicio-usuarios
+    ports:
+      - "3001:3001"
+    environment:
+      - MONGO_URI=mongodb+srv://kiboki:kiboki1234@cluster0.gdvvk58.mongodb.net/distribuidasUsuarios?retryWrites=true&w=majority&appName=Cluster0
+      - JWT_SECRET=supersecreto123
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - mongodb
+      - redis
+
+  eventos:
+    build:
+      context: ./servicio-eventos
+    container_name: servicio-eventos
+    ports:
+      - "3002:3002"
+    environment:
+      - MONGO_URI=mongodb+srv://kiboki:kiboki1234@cluster0.gdvvk58.mongodb.net/distribuidasEventos?retryWrites=true&w=majority&appName=Cluster0
+      - JWT_SECRET=supersecreto123
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - mongodb
+      - redis
+
+  localidades:
+    build:
+      context: ./servicio-localidades
+    container_name: servicio-localidades
+    ports:
+      - "3003:3003"
+    environment:
+      - MONGO_URI=mongodb+srv://kiboki:kiboki1234@cluster0.gdvvk58.mongodb.net/distribuidasLocalidades?retryWrites=true&w=majority&appName=Cluster0
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - mongodb
+      - redis
+
+  colas:
+    build:
+      context: ./servicio-colas
+    container_name: servicio-colas
+    ports:
+      - "4001:4001"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+
+  gateway:
+    build:
+      context: ./gateway-graphql
+    container_name: gateway-graphql
+    ports:
+      - "4000:4000"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=supersecreto123
+    depends_on:
+      - usuarios
+      - eventos
+      - localidades
+      - redis
+
+volumes:
+  mongo_data:
